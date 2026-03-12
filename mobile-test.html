@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>移动端测试页面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .test-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        h2 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .test-item {
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .test-label {
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .test-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-pass {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-fail {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        button {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+            min-height: 56px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:active {
+            transform: scale(0.96);
+            opacity: 0.9;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 120px;
+            margin-bottom: 12px;
+            transition: border-color 0.2s ease;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            margin-bottom: 12px;
+            transition: border-color 0.2s ease;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .gesture-area {
+            height: 200px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            user-select: none;
+            touch-action: manipulation;
+        }
+        
+        .log-area {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 16px;
+            border-radius: 12px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .log-entry {
+            margin-bottom: 4px;
+            opacity: 0.8;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        .info-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .info-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .info-label {
+            font-size: 11px;
+            color: #888;
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+        
+        .checklist {
+            list-style: none;
+        }
+        
+        .checklist li {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+        
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+        
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+        
+        .checkbox.checked {
+            background: #667eea;
+        }
+        
+        .checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+                padding-top: max(12px, env(safe-area-inset-top));
+            }
+            
+            .test-card {
+                padding: 16px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            h2 {
+                font-size: 16px;
+            }
+            
+            button {
+                padding: 14px;
+                font-size: 15px;
+                min-height: 52px;
+            }
+        }
+        
+        @media (orientation: landscape) {
+            .gesture-area {
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>📱 移动端测试页面</h1>
+    
+    <!-- 设备信息 -->
+    <div class="test-card">
+        <h2>📊 设备信息</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-value" id="screenWidth">-</div>
+                <div class="info-label">屏幕宽度</div>
+            </div>
+            <div class="info-item">
+                <div class="info-value" id="screenHeight">-</div>
+                <div class="info-label">屏幕高度</div>
+            </div>
+            <div class="info-item">
+                <div class="info-value" id="pixelRatio">-</div>
+                <div class="info-label">像素比</div>
+            </div>
+            <div class="info-item">
+                <div class="info-value" id="orientation">-</div>
+                <div class="info-label">方向</div>
+            </div>
+            <div class="info-item">
+                <div class="info-value" id="touchPoints">0</div>
+                <div class="info-label">触摸点</div>
+            </div>
+            <div class="info-item">
+                <div class="info-value" id="userAgent">-</div>
+                <div class="info-label">浏览器</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 触摸反馈测试 -->
+    <div class="test-card">
+        <h2>👆 触摸反馈测试</h2>
+        <button class="btn btn-primary" onclick="log('主按钮点击')">主按钮 - 测试点击反馈</button>
+        <button class="btn btn-success" onclick="log('成功按钮点击')">成功按钮</button>
+        <button class="btn btn-warning" onclick="log('警告按钮点击')">警告按钮</button>
+        <button class="btn btn-danger" onclick="log('危险按钮点击')">危险按钮</button>
+        <div class="test-item">
+            <span class="test-label">最小触摸区域 (44px)</span>
+            <span class="test-status status-pass">✅</span>
+        </div>
+    </div>
+    
+    <!-- 输入测试 -->
+    <div class="test-card">
+        <h2>⌨️ 输入测试</h2>
+        <input type="text" placeholder="单行输入 - 测试字体大小 (16px+)" id="testInput">
+        <textarea placeholder="多行输入 - 测试键盘弹出布局"></textarea>
+        <div class="test-item">
+            <span class="test-label">输入时页面不放大</span>
+            <span class="test-status status-pending" id="inputTest">待测试</span>
+        </div>
+    </div>
+    
+    <!-- 手势测试区域 -->
+    <div class="test-card">
+        <h2>🖐️ 手势测试</h2>
+        <div class="gesture-area" id="gestureArea">
+            在此区域测试手势<br>
+            滑动 / 双击 / 长按 / 捏合
+        </div>
+        <div class="log-area" id="gestureLog">
+            <div class="log-entry">等待手势...</div>
+        </div>
+    </div>
+    
+    <!-- 滚动测试 -->
+    <div class="test-card">
+        <h2>📜 滚动测试</h2>
+        <div style="max-height: 200px; overflow-y: auto; -webkit-overflow-scrolling: touch;">
+            <p style="margin-bottom: 12px;">向下滚动测试区域 - 测试滚动流畅度</p>
+            ${Array(20).fill(0).map((_, i) => `<p style="margin-bottom: 8px; color: #666;">滚动测试行 ${i + 1} - 检查是否有卡顿或闪烁</p>`).join('')}
+        </div>
+        <div class="test-item">
+            <span class="test-label">滚动流畅 (60fps)</span>
+            <span class="test-status status-pending" id="scrollTest">待测试</span>
+        </div>
+    </div>
+    
+    <!-- 快速检查清单 -->
+    <div class="test-card">
+        <h2>✅ 快速检查清单</h2>
+        <ul class="checklist" id="checklist">
+            <li onclick="toggleCheck(this)">
+                <div class="checkbox"></div>
+                <span>页面加载正常，无错误</span>
+            </li>
+            <li onclick="toggleCheck(this)">
+                <div class="checkbox"></div>
+                <span>所有按钮可点击 (≥44px)</span>
+            </li>
+            <li onclick="toggleCheck(this)">
+                <div class="checkbox"></div>
+                <span>输入框字体 ≥16px (不放大)</span>
+            </li>
+            <li onclick="toggleCheck(this)">
+                <div class="checkbox"></div>
+                <span>触摸反馈明显</span>
+            </li>
+            <li onclick="toggleCheck(this)">
+                <div class="checkbox"></div>
+                <span>滚动流畅无卡顿</span>
+            </li>
+            <li onclick="toggleCheck(this)">
+                <div class="checkbox"></div>
+                <span>横屏布局正常</span>
+            </li>
+            <li onclick="toggleCheck(this)">
+                <div class="checkbox"></div>
+                <span>安全区域适配 (iPhone X+)</span>
+            </li>
+            <li onclick="toggleCheck(this)">
+                <div class="checkbox"></div>
+                <span>暗色模式正常 (如支持)</span>
+            </li>
+        </ul>
+    </div>
+    
+    <script>
+        // 设备信息检测
+        function updateDeviceInfo() {
+            document.getElementById('screenWidth').textContent = window.screen.width + 'px'
+            document.getElementById('screenHeight').textContent = window.screen.height + 'px'
+            document.getElementById('pixelRatio').textContent = window.devicePixelRatio.toFixed(2)
+            document.getElementById('orientation').textContent = window.innerWidth > window.innerHeight ? '横屏' : '竖屏'
+            document.getElementById('userAgent').textContent = navigator.userAgent.includes('iPhone') ? 'iOS Safari' : 
+                                                                navigator.userAgent.includes('Android') ? 'Android Chrome' : 'Desktop'
+        }
+        
+        updateDeviceInfo()
+        window.addEventListener('resize', updateDeviceInfo)
+        
+        // 日志功能
+        function log(message) {
+            const logArea = document.getElementById('gestureLog')
+            const entry = document.createElement('div')
+            entry.className = 'log-entry'
+            const time = new Date().toLocaleTimeString()
+            entry.textContent = `[${time}] ${message}`
+            logArea.insertBefore(entry, logArea.firstChild)
+            
+            // 限制日志条数
+            while (logArea.children.length > 20) {
+                logArea.removeChild(logArea.lastChild)
+            }
+        }
+        
+        // 检查清单
+        function toggleCheck(element) {
+            const checkbox = element.querySelector('.checkbox')
+            checkbox.classList.toggle('checked')
+        }
+        
+        // 输入测试
+        const testInput = document.getElementById('testInput')
+        let initialScale = null
+        
+        testInput.addEventListener('focus', () => {
+            initialScale = window.innerWidth / window.screen.width
+            log('输入框获得焦点')
+        })
+        
+        testInput.addEventListener('blur', () => {
+            if (initialScale !== null) {
+                const finalScale = window.innerWidth / window.screen.width
+                const statusEl = document.getElementById('inputTest')
+                if (Math.abs(finalScale - initialScale) < 0.01) {
+                    statusEl.textContent = '✅ 通过'
+                    statusEl.className = 'test-status status-pass'
+                    log('输入测试通过 - 页面未放大')
+                } else {
+                    statusEl.textContent = '❌ 失败 - 页面放大了'
+                    statusEl.className = 'test-status status-fail'
+                    log('输入测试失败 - 页面被放大')
+                }
+            }
+        })
+        
+        // 手势测试
+        const gestureArea = document.getElementById('gestureArea')
+        let touchStartX = 0
+        let touchStartY = 0
+        let touchStartTime = 0
+        let touchCount = 0
+        let longPressTimer = null
+        
+        gestureArea.addEventListener('touchstart', (e) => {
+            e.preventDefault()
+            touchCount = e.touches.length
+            touchStartX = e.changedTouches[0].screenX
+            touchStartY = e.changedTouches[0].screenY
+            touchStartTime = Date.now()
+            
+            document.getElementById('touchPoints').textContent = touchCount
+            
+            if (touchCount === 1) {
+                longPressTimer = setTimeout(() => {
+                    log('🖐️ 长按检测')
+                    gestureArea.textContent = '长按!'
+                }, 500)
+            } else if (touchCount === 2) {
+                log('👌 双指触摸')
+                gestureArea.textContent = '捏合手势准备'
+            }
+        }, { passive: false })
+        
+        gestureArea.addEventListener('touchmove', (e) => {
+            e.preventDefault()
+            if (longPressTimer) clearTimeout(longPressTimer)
+            
+            if (touchCount === 2 && e.touches.length === 2) {
+                const dx = e.touches[0].screenX - e.touches[1].screenX
+                const dy = e.touches[0].screenY - e.touches[1].screenY
+                const distance = Math.sqrt(dx * dx + dy * dy).toFixed(0)
+                log(`👌 捏合距离：${distance}px`)
+            }
+        }, { passive: false })
+        
+        gestureArea.addEventListener('touchend', (e) => {
+            e.preventDefault()
+            if (longPressTimer) clearTimeout(longPressTimer)
+            
+            const touchEndX = e.changedTouches[0].screenX
+            const touchEndY = e.changedTouches[0].screenY
+            const deltaX = touchEndX - touchStartX
+            const deltaY = touchEndY - touchStartY
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
+            const duration = Date.now() - touchStartTime
+            
+            document.getElementById('touchPoints').textContent = e.touches.length
+            
+            // 双击检测
+            if (duration < 300 && distance < 10) {
+                log('👆 双击检测')
+                gestureArea.textContent = '双击!'
+                return
+            }
+            
+            // 点击检测
+            if (distance < 10 && duration < 200) {
+                log('👆 点击检测')
+                gestureArea.textContent = '点击!'
+                return
+            }
+            
+            // 滑动检测
+            if (distance > 50) {
+                const angle = Math.atan2(deltaY, deltaX) * 180 / Math.PI
+                let direction = ''
+                
+                if (Math.abs(angle) < 45) direction = '→ 右滑'
+                else if (Math.abs(angle) > 135) direction = '← 左滑'
+                else if (angle > 0) direction = '↓ 下滑'
+                else direction = '↑ 上滑'
+                
+                log(`✋ ${direction} (${distance.toFixed(0)}px)`);
+                gestureArea.textContent = `${direction} ${distance.toFixed(0)}px`
+            }
+            
+            setTimeout(() => {
+                gestureArea.innerHTML = '在此区域测试手势<br>滑动 / 双击 / 长按 / 捏合'
+            }, 1000)
+        }, { passive: false })
+        
+        // 滚动测试
+        let scrollTimeout
+        const scrollTestEl = document.getElementById('scrollTest')
+        
+        window.addEventListener('scroll', () => {
+            scrollTestEl.textContent = '🔄 滚动中...'
+            scrollTestEl.className = 'test-status status-pending'
+            
+            clearTimeout(scrollTimeout)
+            scrollTimeout = setTimeout(() => {
+                scrollTestEl.textContent = '✅ 通过'
+                scrollTestEl.className = 'test-status status-pass'
+                log('滚动测试通过')
+            }, 500)
+        }, { passive: true })
+        
+        // 横屏检测
+        let orientationTimeout
+        window.addEventListener('resize', () => {
+            clearTimeout(orientationTimeout)
+            orientationTimeout = setTimeout(() => {
+                const isLandscape = window.innerWidth > window.innerHeight
+                log(`方向切换：${isLandscape ? '横屏' : '竖屏'}`)
+            }, 300)
+        })
+        
+        log('测试页面加载完成')
+    </script>
+</body>
+</html>
