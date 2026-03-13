@@ -6,6 +6,23 @@
     </header>
 
     <div class="tool-content">
+      <!-- 选项 -->
+      <div class="options-section">
+        <label class="checkbox-label">
+          <input type="checkbox" v-model="caseSensitive" @change="process" />
+          <span>区分大小写</span>
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" v-model="trimSpaces" @change="process" />
+          <span>忽略首尾空格</span>
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" v-model="keepEmpty" @change="process" />
+          <span>保留空行</span>
+        </label>
+      </div>
+
+      <!-- 输入 -->
       <div class="input-section">
         <label class="section-label">
           <span>输入文本</span>
@@ -19,27 +36,7 @@
         ></textarea>
       </div>
 
-      <div class="options-section">
-        <div class="option-item">
-          <label class="checkbox-label">
-            <input type="checkbox" v-model="caseSensitive" @change="process" />
-            <span>区分大小写</span>
-          </label>
-        </div>
-        <div class="option-item">
-          <label class="checkbox-label">
-            <input type="checkbox" v-model="trimSpaces" @change="process" />
-            <span>忽略首尾空格</span>
-          </label>
-        </div>
-        <div class="option-item">
-          <label class="checkbox-label">
-            <input type="checkbox" v-model="keepEmpty" @change="process" />
-            <span>保留空行</span>
-          </label>
-        </div>
-      </div>
-
+      <!-- 输出 -->
       <div class="input-section">
         <label class="section-label">
           <span>去重结果</span>
@@ -48,11 +45,11 @@
         <textarea
           v-model="output"
           class="text-input result"
-          placeholder="结果将显示在这里..."
           readonly
         ></textarea>
       </div>
 
+      <!-- 按钮 -->
       <div class="action-buttons">
         <button class="btn btn-primary" @click="copyResult" :disabled="!output">
           📋 复制结果
@@ -69,6 +66,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { deduplicate } from '../utils/tools'
 
 const input = ref('')
 const output = ref('')
@@ -82,21 +80,11 @@ const outputLines = computed(() => output.value.split('\n').filter(l => l.trim()
 const removedLines = computed(() => inputLines.value - outputLines.value)
 
 function process() {
-  const lines = input.value.split('\n')
-  const seen = new Set()
-  
-  const result = lines.filter(line => {
-    const processed = trimSpaces.value ? line.trim() : line
-    const key = caseSensitive.value ? processed : processed.toLowerCase()
-    
-    if (!keepEmpty.value && !line.trim()) return false
-    if (seen.has(key)) return false
-    
-    seen.add(key)
-    return true
+  output.value = deduplicate(input.value, {
+    caseSensitive: caseSensitive.value,
+    trimSpaces: trimSpaces.value,
+    keepEmpty: keepEmpty.value
   })
-  
-  output.value = result.join('\n')
 }
 
 function copyResult() {
@@ -144,6 +132,25 @@ function clearAll() {
   gap: 16px;
 }
 
+.options-section {
+  background: var(--bg-white);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
 .input-section {
   display: flex;
   flex-direction: column;
@@ -156,7 +163,6 @@ function clearAll() {
   align-items: center;
   font-size: 14px;
   font-weight: 600;
-  color: var(--text-primary);
 }
 
 .section-label .count {
@@ -175,11 +181,7 @@ function clearAll() {
   border-radius: var(--radius-md);
   font-size: 14px;
   font-family: var(--font-mono);
-  line-height: 1.6;
   resize: vertical;
-  transition: all 0.2s ease;
-  background: var(--bg-white);
-  color: var(--text-primary);
 }
 
 .text-input:focus {
@@ -190,68 +192,27 @@ function clearAll() {
 
 .text-input.result {
   background: var(--bg-subtle);
-  color: var(--text-secondary);
-}
-
-.options-section {
-  background: var(--bg-white);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
-  padding: 12px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.option-item {
-  flex: 0 0 auto;
-}
-
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: var(--text-secondary);
-  cursor: pointer;
-  min-height: 32px;
-}
-
-.checkbox-label input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
 }
 
 .action-buttons {
   display: flex;
   gap: 12px;
-  margin-top: 8px;
 }
 
 .btn {
   flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
   padding: 14px 20px;
   border: none;
   border-radius: var(--radius-md);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
   min-height: 48px;
 }
 
 .btn-primary {
   background: var(--brand-primary);
   color: #fff;
-}
-
-.btn-primary:hover {
-  background: var(--brand-primary-dark);
 }
 
 .btn-primary:disabled {
@@ -265,40 +226,18 @@ function clearAll() {
   border: 1px solid var(--border-light);
 }
 
-.btn-secondary:hover {
-  background: var(--bg-subtle);
-}
-
 .toast {
   position: fixed;
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
   padding: 12px 24px;
-  background: var(--bg-dark);
+  background: var(--success);
   color: #fff;
   border-radius: var(--radius-md);
-  font-size: 14px;
   box-shadow: var(--shadow-lg);
-  animation: slideUp 0.3s ease;
 }
 
-.toast.success {
-  background: var(--success);
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
-
-/* 移动端优化 */
 @media (max-width: 767px) {
   .tool-page {
     padding: 12px;
@@ -306,30 +245,14 @@ function clearAll() {
   
   .tool-header {
     padding: 16px;
-    margin-bottom: 16px;
   }
   
   .tool-title {
     font-size: 18px;
   }
   
-  .tool-desc {
-    font-size: 12px;
-  }
-  
   .text-input {
     min-height: 160px;
-    font-size: 14px;
-    padding: 10px;
-  }
-  
-  .options-section {
-    padding: 10px;
-    gap: 10px;
-  }
-  
-  .checkbox-label {
-    font-size: 13px;
   }
   
   .action-buttons {
@@ -338,18 +261,6 @@ function clearAll() {
   
   .btn {
     width: 100%;
-  }
-  
-  .section-label .count {
-    font-size: 11px;
-    padding: 3px 6px;
-  }
-}
-
-/* 安全区域适配 */
-@supports (padding: max(0px)) {
-  .tool-page {
-    padding-bottom: max(16px, env(safe-area-inset-bottom));
   }
 }
 </style>

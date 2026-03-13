@@ -1,21 +1,23 @@
 <template>
   <div class="home">
+    <!-- 头部 -->
     <header class="home-header">
       <h1 class="home-title">片刻工具箱</h1>
       <p class="home-subtitle">在线数据处理工具 · 片刻之间 · 轻松搞定</p>
       
+      <!-- 搜索框 -->
       <div class="search-box">
         <input 
           v-model="searchQuery" 
           type="text" 
           placeholder="搜索工具..." 
           class="search-input"
-          @input="filterTools"
         />
         <span class="search-icon">🔍</span>
       </div>
     </header>
 
+    <!-- 常用工具 -->
     <section class="tools-section">
       <h2 class="section-title">🔥 常用工具</h2>
       <div class="tools-grid">
@@ -24,8 +26,6 @@
           :key="tool.id"
           class="tool-card"
           @click="$emit('select', tool.id)"
-          tabindex="0"
-          @keydown.enter="$emit('select', tool.id)"
         >
           <div class="tool-icon">{{ tool.icon }}</div>
           <h3 class="tool-name">{{ tool.name }}</h3>
@@ -34,6 +34,7 @@
       </div>
     </section>
 
+    <!-- 全部工具 -->
     <section class="tools-section">
       <h2 class="section-title">📦 全部工具</h2>
       <div class="tools-grid">
@@ -42,8 +43,6 @@
           :key="tool.id"
           class="tool-card"
           @click="$emit('select', tool.id)"
-          tabindex="0"
-          @keydown.enter="$emit('select', tool.id)"
         >
           <div class="tool-icon">{{ tool.icon }}</div>
           <h3 class="tool-name">{{ tool.name }}</h3>
@@ -60,32 +59,26 @@ import { ref, computed } from 'vue'
 const searchQuery = ref('')
 
 const tools = [
-  { id: 'dedup', name: '文本去重', icon: '📝', description: '去除重复行，保留唯一值', category: 'text' },
-  { id: 'replace', name: '批量替换', icon: '🔄', description: '多规则批量替换文本', category: 'text' },
-  { id: 'diff', name: '文本比对', icon: '🔍', description: '对比两个文本的差异', category: 'text' },
-  { id: 'clean', name: '文本清洗', icon: '🧹', description: '清理多余空格和特殊字符', category: 'text' },
-  { id: 'merge', name: '文本合并', icon: '🔗', description: '合并多个文本文件', category: 'text' },
-  { id: 'calc', name: '在线计算', icon: '🧮', description: '表达式计算工具', category: 'calc' },
-  { id: 'addchar', name: '首尾字符', icon: '📎', description: '批量添加首尾字符', category: 'text' },
-  { id: 'case', name: '大小写转换', icon: '🔤', description: '文本大小写互转', category: 'text' },
-  { id: 'encode', name: '编解码', icon: '🔐', description: 'URL/Base64 编解码', category: 'dev' },
-  { id: 'json', name: 'JSON 格式化', icon: '{ }', description: 'JSON 校验格式化', category: 'dev' }
+  { id: 'dedup', name: '文本去重', icon: '📝', description: '去除重复行，保留唯一值' },
+  { id: 'replace', name: '批量替换', icon: '🔄', description: '多规则批量替换文本' },
+  { id: 'diff', name: '文本比对', icon: '🔍', description: '对比两个文本的差异' },
+  { id: 'clean', name: '文本清洗', icon: '🧹', description: '清理多余空格和特殊字符' },
+  { id: 'merge', name: '文本合并', icon: '🔗', description: '合并多个文本文件' },
+  { id: 'calc', name: '在线计算', icon: '🧮', description: '表达式计算工具' },
+  { id: 'addchar', name: '首尾字符', icon: '📎', description: '批量添加首尾字符' },
+  { id: 'case', name: '大小写转换', icon: '🔤', description: '文本大小写互转' },
+  { id: 'encode', name: '编解码', icon: '🔐', description: 'URL/Base64 编解码' },
+  { id: 'json', name: 'JSON 格式化', icon: '{ }', description: 'JSON 校验格式化' }
 ]
 
 const filteredTools = computed(() => {
-  if (!searchQuery.value.trim()) {
-    return tools
-  }
+  if (!searchQuery.value.trim()) return tools
   const query = searchQuery.value.toLowerCase()
   return tools.filter(tool => 
     tool.name.toLowerCase().includes(query) || 
     tool.description.toLowerCase().includes(query)
   )
 })
-
-function filterTools() {
-  // 搜索逻辑已在 computed 中处理
-}
 </script>
 
 <style scoped>
@@ -109,7 +102,6 @@ function filterTools() {
   font-size: 36px;
   font-weight: 700;
   margin-bottom: 12px;
-  letter-spacing: 2px;
 }
 
 .home-subtitle {
@@ -132,7 +124,6 @@ function filterTools() {
   font-size: 15px;
   background: rgba(255, 255, 255, 0.95);
   color: var(--text-primary);
-  transition: all 0.2s ease;
 }
 
 .search-input:focus {
@@ -158,7 +149,6 @@ function filterTools() {
   font-size: 22px;
   font-weight: 600;
   margin-bottom: 24px;
-  color: var(--text-primary);
 }
 
 .tools-grid {
@@ -183,11 +173,6 @@ function filterTools() {
   border-color: var(--brand-primary);
 }
 
-.tool-card:focus {
-  outline: 2px solid var(--brand-primary);
-  outline-offset: 2px;
-}
-
 .tool-icon {
   font-size: 36px;
   margin-bottom: 16px;
@@ -197,16 +182,13 @@ function filterTools() {
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 8px;
-  color: var(--text-primary);
 }
 
 .tool-desc {
   font-size: 14px;
   color: var(--text-secondary);
-  line-height: 1.5;
 }
 
-/* 移动端优化 */
 @media (max-width: 767px) {
   .home {
     padding: 12px;
@@ -219,119 +201,15 @@ function filterTools() {
   
   .home-title {
     font-size: 24px;
-    margin-bottom: 8px;
   }
   
   .home-subtitle {
     font-size: 13px;
-    margin-bottom: 20px;
-  }
-  
-  .search-box {
-    max-width: 100%;
-  }
-  
-  .search-input {
-    padding: 12px 40px 12px 16px;
-    font-size: 14px;
-  }
-  
-  .search-icon {
-    right: 12px;
-    font-size: 16px;
-  }
-  
-  .tools-section {
-    margin-bottom: 32px;
-  }
-  
-  .section-title {
-    font-size: 18px;
-    margin-bottom: 16px;
   }
   
   .tools-grid {
-    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+    grid-template-columns: 1fr;
     gap: 12px;
-  }
-  
-  .tool-card {
-    padding: 16px;
-    border-radius: var(--radius-md);
-  }
-  
-  .tool-card:hover {
-    transform: translateY(-2px);
-  }
-  
-  .tool-icon {
-    font-size: 28px;
-    margin-bottom: 12px;
-  }
-  
-  .tool-name {
-    font-size: 16px;
-    margin-bottom: 6px;
-  }
-  
-  .tool-desc {
-    font-size: 13px;
-    line-height: 1.4;
-  }
-}
-
-/* 平板优化 */
-@media (min-width: 768px) and (max-width: 1024px) {
-  .home {
-    padding: 16px;
-  }
-  
-  .home-title {
-    font-size: 28px;
-  }
-  
-  .tools-grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 16px;
-  }
-}
-
-/* 小屏手机优化 */
-@media (max-width: 375px) {
-  .home-title {
-    font-size: 20px;
-  }
-  
-  .home-subtitle {
-    font-size: 12px;
-  }
-  
-  .tool-name {
-    font-size: 15px;
-  }
-  
-  .tool-desc {
-    font-size: 12px;
-  }
-}
-
-/* 横屏优化 */
-@media (max-height: 500px) and (orientation: landscape) {
-  .home-header {
-    padding: 16px;
-    margin-bottom: 16px;
-  }
-  
-  .home-title {
-    font-size: 20px;
-  }
-  
-  .home-subtitle {
-    display: none;
-  }
-  
-  .tools-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
 }
 </style>

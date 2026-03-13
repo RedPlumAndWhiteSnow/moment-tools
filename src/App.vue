@@ -1,5 +1,6 @@
 <template>
   <div class="app">
+    <!-- 侧边栏 -->
     <Sidebar 
       :current="currentTool" 
       :mobileOpen="mobileMenuOpen"
@@ -7,13 +8,17 @@
       @close="mobileMenuOpen = false"
     />
     
+    <!-- 主内容区 -->
     <main class="main">
+      <!-- 移动端菜单按钮 -->
       <button class="menu-toggle" @click="mobileMenuOpen = true" aria-label="打开菜单">
         ☰
       </button>
       
+      <!-- 主题切换 -->
       <ThemeToggle />
       
+      <!-- 工具内容 -->
       <component :is="currentComponent" @select="selectTool" />
     </main>
   </div>
@@ -23,6 +28,8 @@
 import { ref, computed } from 'vue'
 import Sidebar from './components/Sidebar.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
+
+// 导入所有工具视图
 import Home from './views/Home.vue'
 import Dedup from './views/Dedup.vue'
 import Replace from './views/Replace.vue'
@@ -36,27 +43,32 @@ import Encode from './views/Encode.vue'
 import JsonTool from './views/JsonTool.vue'
 import Support from './views/Support.vue'
 
+// 当前工具
 const currentTool = ref('home')
 const mobileMenuOpen = ref(false)
 
+// 工具组件映射
+const toolComponents = {
+  home: Home,
+  dedup: Dedup,
+  replace: Replace,
+  diff: Diff,
+  clean: Clean,
+  merge: Merge,
+  calc: Calc,
+  addchar: AddChar,
+  case: Case,
+  encode: Encode,
+  json: JsonTool,
+  support: Support
+}
+
+// 当前组件
 const currentComponent = computed(() => {
-  const components = {
-    home: Home,
-    dedup: Dedup,
-    replace: Replace,
-    diff: Diff,
-    clean: Clean,
-    merge: Merge,
-    calc: Calc,
-    addchar: AddChar,
-    case: Case,
-    encode: Encode,
-    json: JsonTool,
-    support: Support
-  }
-  return components[currentTool.value] || Home
+  return toolComponents[currentTool.value] || Home
 })
 
+// 切换工具
 function selectTool(tool) {
   currentTool.value = tool
   if (window.innerWidth < 768) {
@@ -125,7 +137,7 @@ function selectTool(tool) {
   }
 }
 
-/* 安全区域适配（iPhone X+）*/
+/* 安全区域适配 */
 @supports (padding: max(0px)) {
   .menu-toggle {
     top: max(16px, env(safe-area-inset-top));

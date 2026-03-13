@@ -1,18 +1,33 @@
+/**
+ * 片刻工具箱 - 全局样式
+ * 移动端优先的响应式设计
+ */
+
+/* CSS 变量定义 */
 :root {
+  /* 品牌色 */
   --brand-primary: #5b8baf;
   --brand-primary-dark: #4a7a9a;
   --brand-primary-light: #7ab3d6;
   --brand-gradient: linear-gradient(135deg, #5b8baf 0%, #7ab3d6 100%);
+  
+  /* 背景色 */
   --bg-dark: #2d3748;
   --bg-dark-light: #4a5568;
   --bg-light: #fafbfc;
   --bg-white: #ffffff;
   --bg-subtle: #f0f4f8;
+  
+  /* 文字色 */
   --text-primary: #2d3748;
   --text-secondary: #4a5568;
   --text-tertiary: #718096;
+  
+  /* 边框色 */
   --border-light: #e2e8f0;
   --border-medium: #cbd5e0;
+  
+  /* 功能色 */
   --success: #48bb78;
   --success-dark: #38a169;
   --warning: #ed8936;
@@ -20,22 +35,34 @@
   --error: #fc8181;
   --error-dark: #f56565;
   --info: #63b3ed;
+  
+  /* 阴影 */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.08);
   --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.1);
+  
+  /* 圆角 */
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
+  
+  /* 过渡 */
   --transition-fast: 0.15s ease;
   --transition-base: 0.2s ease;
   --transition-slow: 0.3s ease;
+  
+  /* 字体 */
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: "Monaco", "Consolas", "Ubuntu Mono", monospace;
+  
+  /* 布局 */
   --sidebar-width: 260px;
+  --header-height: 60px;
 }
 
+/* 暗色模式 */
 @media (prefers-color-scheme: dark) {
   :root {
     --brand-primary: #7ab3d6;
@@ -66,6 +93,7 @@
   }
 }
 
+/* 基础重置 */
 * {
   margin: 0;
   padding: 0;
@@ -87,6 +115,7 @@ html, body {
   -webkit-text-size-adjust: 100%;
 }
 
+/* 触控优化 */
 button, .btn, a, .card, .tab, .tab-btn {
   min-height: 44px;
   min-width: 44px;
@@ -97,18 +126,20 @@ input, textarea, select {
   font-size: 16px;
 }
 
+/* 通用按钮样式 */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 10px 20px;
+  gap: 6px;
+  padding: 12px 20px;
   border: none;
   border-radius: var(--radius-md);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-base);
+  min-height: 44px;
 }
 
 .btn-primary {
@@ -122,15 +153,10 @@ input, textarea, select {
   box-shadow: var(--shadow-md);
 }
 
-.btn-success {
-  background: var(--success);
-  color: #fff;
-}
-
-.btn-success:hover {
-  background: var(--success-dark);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
 }
 
 .btn-secondary {
@@ -144,8 +170,130 @@ input, textarea, select {
   color: var(--text-primary);
 }
 
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none !important;
+.btn-success {
+  background: var(--success);
+  color: #fff;
+}
+
+.btn-success:hover {
+  background: var(--success-dark);
+}
+
+/* 输入框样式 */
+.input, textarea, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--bg-white);
+  color: var(--text-primary);
+  transition: all var(--transition-base);
+}
+
+.input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px rgba(91, 139, 175, 0.1);
+}
+
+/* 卡片样式 */
+.card {
+  background: var(--bg-white);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* 标签样式 */
+.label {
+  display: inline-block;
+  padding: 4px 10px;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* 工具提示 */
+.tooltip {
+  position: relative;
+}
+
+.tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 10px;
+  background: var(--bg-dark);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all var(--transition-fast);
+}
+
+.tooltip:hover::after {
+  opacity: 1;
+  bottom: calc(100% + 6px);
+}
+
+/* 动画 */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 加载动画 */
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--border-light);
+  border-top-color: var(--brand-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* 响应式工具类 */
+@media (max-width: 767px) {
+  .hide-mobile {
+    display: none !important;
+  }
+  
+  .show-mobile {
+    display: block !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .hide-desktop {
+    display: none !important;
+  }
 }
