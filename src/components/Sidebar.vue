@@ -25,6 +25,10 @@
         <a href="#" :class="{ active: current === 'encode' }" @click.prevent="$emit('change', 'encode')">🔐 编解码</a>
         <a href="#" :class="{ active: current === 'json' }" @click.prevent="$emit('change', 'json')">{ } JSON</a>
       </div>
+      
+      <div class="nav-section">
+        <a href="#" :class="{ active: current === 'support' }" @click.prevent="$emit('change', 'support')">❤️ 支持我们</a>
+      </div>
     </nav>
   </aside>
 </template>
