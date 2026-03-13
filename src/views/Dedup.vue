@@ -1,311 +1,355 @@
 <template>
-  <div class="dedup-page">
-    <div class="dedup-container">
-      <div class="toolbar">
-        <div class="toolbar-left">
-          <span class="toolbar-title">📝 文本去重</span>
-        </div>
-        <div class="toolbar-actions">
+  <div class="tool-page">
+    <header class="tool-header">
+      <h1 class="tool-title">📝 文本去重</h1>
+      <p class="tool-desc">去除重复行，保留唯一值</p>
+    </header>
+
+    <div class="tool-content">
+      <div class="input-section">
+        <label class="section-label">
+          <span>输入文本</span>
+          <span class="count">{{ inputLines }} 行</span>
+        </label>
+        <textarea
+          v-model="input"
+          class="text-input"
+          placeholder="请输入文本，每行一条..."
+          @input="process"
+        ></textarea>
+      </div>
+
+      <div class="options-section">
+        <div class="option-item">
           <label class="checkbox-label">
-            <input type="checkbox" v-model="ignoreSpaces">
+            <input type="checkbox" v-model="caseSensitive" @change="process" />
+            <span>区分大小写</span>
+          </label>
+        </div>
+        <div class="option-item">
+          <label class="checkbox-label">
+            <input type="checkbox" v-model="trimSpaces" @change="process" />
             <span>忽略首尾空格</span>
           </label>
-          <button class="btn btn-secondary" @click="clear">🗑️ 清空</button>
-          <button class="btn btn-success" @click="copyResult" :disabled="!output">📋 复制</button>
+        </div>
+        <div class="option-item">
+          <label class="checkbox-label">
+            <input type="checkbox" v-model="keepEmpty" @change="process" />
+            <span>保留空行</span>
+          </label>
         </div>
       </div>
 
-      <div class="work-area">
-        <div class="input-section">
-          <label class="section-label">
-            <span class="label-icon">📄</span>
-            <span>原始文本</span>
-            <span v-if="inputStats" class="stats">{{ inputStats }} 行</span>
-          </label>
-          <textarea 
-            v-model="input" 
-            @input="process"
-            placeholder="粘贴需要去重的文本，每行一条... (Ctrl+Enter 处理)"
-            class="dedup-input"
-          ></textarea>
-        </div>
-
-        <div class="output-section">
-          <label class="section-label">
-            <span class="label-icon">✨</span>
-            <span>去重结果</span>
-            <span v-if="outputStats" class="stats">
-              {{ outputStats }} 行 
-              <span class="removed">(移除 {{ inputStats - outputStats }} 行)</span>
-            </span>
-          </label>
-          <textarea 
-            v-model="output" 
-            readonly
-            placeholder="结果将显示在这里..."
-            class="dedup-output"
-          ></textarea>
-        </div>
+      <div class="input-section">
+        <label class="section-label">
+          <span>去重结果</span>
+          <span class="count">{{ outputLines }} 行 · 已去除 {{ removedLines }} 行</span>
+        </label>
+        <textarea
+          v-model="output"
+          class="text-input result"
+          placeholder="结果将显示在这里..."
+          readonly
+        ></textarea>
       </div>
+
+      <div class="action-buttons">
+        <button class="btn btn-primary" @click="copyResult" :disabled="!output">
+          📋 复制结果
+        </button>
+        <button class="btn btn-secondary" @click="clearAll">
+          🗑️ 清空
+        </button>
+      </div>
+
+      <div v-if="success" class="toast success">✅ 已复制到剪贴板</div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed } from 'vue'
 
 const input = ref('')
 const output = ref('')
-const ignoreSpaces = ref(false)
+const caseSensitive = ref(false)
+const trimSpaces = ref(false)
+const keepEmpty = ref(false)
+const success = ref(false)
 
-const inputStats = computed(() => {
-  if (!input.value.trim()) return 0
-  return input.value.split('\n').filter(line => line.trim()).length
-})
-
-const outputStats = computed(() => {
-  if (!output.value.trim()) return 0
-  return output.value.split('\n').filter(line => line.trim()).length
-})
+const inputLines = computed(() => input.value.split('\n').filter(l => l.trim()).length)
+const outputLines = computed(() => output.value.split('\n').filter(l => l.trim()).length)
+const removedLines = computed(() => inputLines.value - outputLines.value)
 
 function process() {
-  if (!input.value.trim()) {
-    output.value = ''
-    saveToStorage()
-    return
-  }
-
-  let lines = input.value.split('\n')
-  
-  if (ignoreSpaces.value) {
-    lines = lines.map(line => line.trim())
-  }
-
+  const lines = input.value.split('\n')
   const seen = new Set()
-  const result = []
   
-  for (const line of lines) {
-    const key = ignoreSpaces.value ? line.trim() : line
-    if (key && !seen.has(key)) {
-      seen.add(key)
-      result.push(line)
-    }
-  }
-
+  const result = lines.filter(line => {
+    const processed = trimSpaces.value ? line.trim() : line
+    const key = caseSensitive.value ? processed : processed.toLowerCase()
+    
+    if (!keepEmpty.value && !line.trim()) return false
+    if (seen.has(key)) return false
+    
+    seen.add(key)
+    return true
+  })
+  
   output.value = result.join('\n')
-  saveToStorage()
-}
-
-function saveToStorage() {
-  localStorage.setItem('moment_dedup_input', input.value)
-}
-
-function loadFromStorage() {
-  const saved = localStorage.getItem('moment_dedup_input')
-  if (saved) {
-    input.value = saved
-    process()
-  }
-}
-
-function clear() {
-  if (confirm('确定要清空所有内容吗？此操作无法撤销。')) {
-    input.value = ''
-    output.value = ''
-    localStorage.removeItem('moment_dedup_input')
-  }
 }
 
 function copyResult() {
-  if (output.value.trim()) {
-    navigator.clipboard.writeText(output.value)
-  }
+  navigator.clipboard.writeText(output.value)
+  success.value = true
+  setTimeout(() => success.value = false, 2000)
 }
 
-function handleKeydown(e) {
-  if (e.ctrlKey && e.key === 'Enter') {
-    e.preventDefault()
-    process()
-  }
-  if (e.ctrlKey && e.key === 'd') {
-    e.preventDefault()
-    clear()
-  }
-  if (e.ctrlKey && e.key === 'c' && document.activeElement.tagName !== 'TEXTAREA') {
-    e.preventDefault()
-    copyResult()
-  }
+function clearAll() {
+  input.value = ''
+  output.value = ''
 }
-
-onMounted(() => {
-  loadFromStorage()
-  window.addEventListener('keydown', handleKeydown)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('keydown', handleKeydown)
-})
 </script>
 
 <style scoped>
-.dedup-page {
-  padding: 32px 32px 32px 40px;
-  background: var(--bg-light);
-  animation: slideUp 0.4s ease-out;
-}
-
-@keyframes slideUp {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.dedup-container {
-  max-width: 1200px;
+.tool-page {
+  padding: 16px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 0 24px;
 }
 
-.toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  background: var(--bg-white);
-  border: 1px solid var(--border-light);
+.tool-header {
+  text-align: center;
+  margin-bottom: 24px;
+  padding: 20px 16px;
+  background: var(--brand-gradient);
   border-radius: var(--radius-lg);
-  margin-bottom: 16px;
-  box-shadow: var(--shadow-sm);
+  color: #fff;
 }
 
-.toolbar-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.toolbar-title {
-  font-size: 18px;
+.tool-title {
+  font-size: 22px;
   font-weight: 700;
-  color: var(--text-primary);
+  margin-bottom: 6px;
 }
 
-.toolbar-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.tool-desc {
   font-size: 13px;
-  color: var(--text-secondary);
-  cursor: pointer;
-  padding: 6px 10px;
-  border-radius: var(--radius-md);
-  transition: background var(--transition-fast);
+  opacity: 0.9;
 }
 
-.checkbox-label:hover {
-  background: var(--bg-subtle);
-}
-
-.checkbox-label input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-  accent-color: var(--brand-primary);
-}
-
-.work-area {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.tool-content {
+  display: flex;
+  flex-direction: column;
   gap: 16px;
-  width: 100%;
 }
 
-.input-section,
-.output-section {
-  background: var(--bg-white);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-lg);
-  padding: 20px;
-  box-shadow: var(--shadow-sm);
-  min-width: 0;
-  max-width: 100%;
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .section-label {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 8px;
   font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
-  margin-bottom: 12px;
 }
 
-.label-icon {
-  font-size: 16px;
-}
-
-.section-label .stats {
-  margin-left: auto;
-  font-weight: 500;
+.section-label .count {
   font-size: 12px;
-  background: var(--bg-subtle);
-  color: var(--text-secondary);
-  padding: 3px 8px;
-  border-radius: 10px;
-}
-
-.section-label .stats .removed {
   color: var(--text-tertiary);
-  margin-left: 4px;
+  background: var(--bg-subtle);
+  padding: 4px 8px;
+  border-radius: 4px;
 }
 
-.dedup-input,
-.dedup-output {
+.text-input {
   width: 100%;
-  height: 350px;
+  min-height: 200px;
+  padding: 12px;
   border: 1px solid var(--border-light);
   border-radius: var(--radius-md);
-  padding: 14px;
-  font-size: 13px;
-  line-height: 1.8;
-  resize: vertical;
+  font-size: 14px;
   font-family: var(--font-mono);
-  box-sizing: border-box;
+  line-height: 1.6;
+  resize: vertical;
+  transition: all 0.2s ease;
   background: var(--bg-white);
   color: var(--text-primary);
-  transition: all 0.2s ease;
 }
 
-.dedup-input:focus,
-.dedup-output:focus {
+.text-input:focus {
   outline: none;
   border-color: var(--brand-primary);
   box-shadow: 0 0 0 3px rgba(91, 139, 175, 0.1);
 }
 
-.dedup-output {
+.text-input.result {
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+}
+
+.options-section {
+  background: var(--bg-white);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.option-item {
+  flex: 0 0 auto;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  min-height: 32px;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 20px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 48px;
+}
+
+.btn-primary {
+  background: var(--brand-primary);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--brand-primary-dark);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: var(--bg-white);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+}
+
+.btn-secondary:hover {
   background: var(--bg-subtle);
 }
 
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  background: var(--bg-dark);
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 0.3s ease;
+}
+
+.toast.success {
+  background: var(--success);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* 移动端优化 */
 @media (max-width: 767px) {
-  .dedup-page {
-    padding: 80px 16px 16px;
+  .tool-page {
+    padding: 12px;
   }
   
-  .work-area {
-    grid-template-columns: 1fr;
+  .tool-header {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .tool-title {
+    font-size: 18px;
+  }
+  
+  .tool-desc {
+    font-size: 12px;
+  }
+  
+  .text-input {
+    min-height: 160px;
+    font-size: 14px;
+    padding: 10px;
+  }
+  
+  .options-section {
+    padding: 10px;
+    gap: 10px;
+  }
+  
+  .checkbox-label {
+    font-size: 13px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .btn {
+    width: 100%;
+  }
+  
+  .section-label .count {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+}
+
+/* 安全区域适配 */
+@supports (padding: max(0px)) {
+  .tool-page {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
   }
 }
 </style>
