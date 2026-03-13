@@ -206,30 +206,132 @@ function filterTools() {
   line-height: 1.5;
 }
 
+/* 移动端优化 */
 @media (max-width: 767px) {
   .home {
-    padding: 16px;
+    padding: 12px;
   }
   
   .home-header {
     padding: 24px 16px;
+    margin-bottom: 24px;
+  }
+  
+  .home-title {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+  
+  .home-subtitle {
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+  
+  .search-box {
+    max-width: 100%;
+  }
+  
+  .search-input {
+    padding: 12px 40px 12px 16px;
+    font-size: 14px;
+  }
+  
+  .search-icon {
+    right: 12px;
+    font-size: 16px;
+  }
+  
+  .tools-section {
+    margin-bottom: 32px;
+  }
+  
+  .section-title {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+  
+  .tools-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+    gap: 12px;
+  }
+  
+  .tool-card {
+    padding: 16px;
+    border-radius: var(--radius-md);
+  }
+  
+  .tool-card:hover {
+    transform: translateY(-2px);
+  }
+  
+  .tool-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+  
+  .tool-name {
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+  
+  .tool-desc {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+}
+
+/* 平板优化 */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .home {
+    padding: 16px;
   }
   
   .home-title {
     font-size: 28px;
   }
   
+  .tools-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+}
+
+/* 小屏手机优化 */
+@media (max-width: 375px) {
+  .home-title {
+    font-size: 20px;
+  }
+  
   .home-subtitle {
-    font-size: 14px;
+    font-size: 12px;
+  }
+  
+  .tool-name {
+    font-size: 15px;
+  }
+  
+  .tool-desc {
+    font-size: 12px;
+  }
+}
+
+/* 横屏优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+  .home-header {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .home-title {
+    font-size: 20px;
+  }
+  
+  .home-subtitle {
+    display: none;
   }
   
   .tools-grid {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 16px;
-  }
-  
-  .tool-card {
-    padding: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
 }
 </style>

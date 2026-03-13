@@ -81,6 +81,7 @@ function selectTool(tool) {
   position: relative;
   width: calc(100% - var(--sidebar-width, 260px));
   min-width: 0;
+  -webkit-overflow-scrolling: touch;
 }
 
 .menu-toggle {
@@ -100,11 +101,16 @@ function selectTool(tool) {
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .menu-toggle:hover {
   background: var(--bg-subtle);
   transform: scale(1.05);
+}
+
+.menu-toggle:active {
+  transform: scale(0.95);
 }
 
 @media (max-width: 767px) {
@@ -116,6 +122,18 @@ function selectTool(tool) {
   
   .menu-toggle {
     display: flex;
+  }
+}
+
+/* 安全区域适配（iPhone X+）*/
+@supports (padding: max(0px)) {
+  .menu-toggle {
+    top: max(16px, env(safe-area-inset-top));
+    left: max(16px, env(safe-area-inset-left));
+  }
+  
+  .main {
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 </style>

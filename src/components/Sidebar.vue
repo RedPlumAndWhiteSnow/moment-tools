@@ -117,6 +117,7 @@ defineEmits(['change', 'close'])
   overflow-y: auto;
   z-index: 1000;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-overflow-scrolling: touch;
 }
 
 @media (min-width: 768px) {
@@ -192,10 +193,15 @@ defineEmits(['change', 'close'])
   align-items: center;
   justify-content: center;
   transition: background 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .close-btn:hover {
   background: rgba(255, 255, 255, 0.19);
+}
+
+.close-btn:active {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .sidebar::-webkit-scrollbar {
@@ -250,11 +256,16 @@ defineEmits(['change', 'close'])
   font-size: 14px;
   transition: all 0.2s ease;
   min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .nav a:hover {
   background: rgba(255, 255, 255, 0.08);
   color: #fff;
+}
+
+.nav a:active {
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .nav a.active {
@@ -342,6 +353,21 @@ defineEmits(['change', 'close'])
   
   .logo-text {
     font-size: 18px;
+  }
+}
+
+/* 安全区域适配（iPhone X+）*/
+@supports (padding: max(0px)) {
+  .sidebar {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .logo {
+    padding-top: max(24px, env(safe-area-inset-top));
+  }
+  
+  .menu-toggle {
+    left: max(16px, env(safe-area-inset-left));
   }
 }
 </style>
