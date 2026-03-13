@@ -14,12 +14,12 @@
       <!-- 收款码 -->
       <div class="qr-row">
         <div class="qr-card">
-          <img src="/qrcode/wechat.png" alt="微信" class="qr-image wechat">
+          <img :src="wechatQr" alt="微信" class="qr-image wechat">
           <h3 class="qr-title wechat">微信</h3>
           <p class="qr-desc">扫码支持我们</p>
         </div>
         <div class="qr-card">
-          <img src="/qrcode/alipay.png" alt="支付宝" class="qr-image alipay">
+          <img :src="alipayQr" alt="支付宝" class="qr-image alipay">
           <h3 class="qr-title alipay">支付宝</h3>
           <p class="qr-desc">扫码支持我们</p>
         </div>
@@ -34,6 +34,12 @@
     </div>
   </div>
 </template>
+
+<script setup>
+// 使用绝对路径引用 public 目录下的图片
+const wechatQr = '/qrcode/wechat.png'
+const alipayQr = '/qrcode/alipay.png'
+</script>
 
 <style scoped>
 .support-page {
