@@ -1,0 +1,151 @@
+:root {
+  --brand-primary: #5b8baf;
+  --brand-primary-dark: #4a7a9a;
+  --brand-primary-light: #7ab3d6;
+  --brand-gradient: linear-gradient(135deg, #5b8baf 0%, #7ab3d6 100%);
+  --bg-dark: #2d3748;
+  --bg-dark-light: #4a5568;
+  --bg-light: #fafbfc;
+  --bg-white: #ffffff;
+  --bg-subtle: #f0f4f8;
+  --text-primary: #2d3748;
+  --text-secondary: #4a5568;
+  --text-tertiary: #718096;
+  --border-light: #e2e8f0;
+  --border-medium: #cbd5e0;
+  --success: #48bb78;
+  --success-dark: #38a169;
+  --warning: #ed8936;
+  --warning-dark: #dd6b20;
+  --error: #fc8181;
+  --error-dark: #f56565;
+  --info: #63b3ed;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+  --transition-slow: 0.3s ease;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Monaco", "Consolas", "Ubuntu Mono", monospace;
+  --sidebar-width: 260px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --brand-primary: #7ab3d6;
+    --brand-primary-dark: #5b8baf;
+    --brand-primary-light: #9dcce3;
+    --brand-gradient: linear-gradient(135deg, #7ab3d6 0%, #5b8baf 100%);
+    --bg-dark: #0f172a;
+    --bg-dark-light: #1e293b;
+    --bg-light: #0f172a;
+    --bg-white: #1e293b;
+    --bg-subtle: #334155;
+    --text-primary: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --text-tertiary: #94a3b8;
+    --border-light: #334155;
+    --border-medium: #475569;
+    --success: #86efac;
+    --success-dark: #4ade80;
+    --warning: #fcd34d;
+    --warning-dark: #fbbf24;
+    --error: #fca5a5;
+    --error-dark: #f87171;
+    --info: #7dd3fc;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.5);
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--bg-light);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+button, .btn, a, .card, .tab, .tab-btn {
+  min-height: 44px;
+  min-width: 44px;
+  touch-action: manipulation;
+}
+
+input, textarea, select {
+  font-size: 16px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.btn-primary {
+  background: var(--brand-primary);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--brand-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-success {
+  background: var(--success);
+  color: #fff;
+}
+
+.btn-success:hover {
+  background: var(--success-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+  background: var(--bg-white);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}

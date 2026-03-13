@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none">
+  <!-- 紫色圆形背景 -->
+  <circle cx="8" cy="8" r="7.5" fill="#8b5cf6"/>
+  <!-- 白色简约时钟 -->
+  <circle cx="8" cy="8" r="4.5" stroke="#fff" stroke-width="1.2" fill="none"/>
+  <path d="M8 6v2.5l1.5 1" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
